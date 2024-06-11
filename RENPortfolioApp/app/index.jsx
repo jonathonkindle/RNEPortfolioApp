@@ -1,14 +1,40 @@
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { Link, useRouter } from 'expo-router';
+import { useState } from 'react';
+import * as ImagePicker from 'expo-image-picker';
+import ImageViewer from '../components/ImageViewer';
+
+const PlaceholderImage = require('../assets/images/profile.jpeg');
 
 export default function HomePage() {
+    const [selectedImage, setSelectedImage] = useState(null);
   const router = useRouter();
+
+  const pickImageAsync = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setSelectedImage(result.assets[0].uri);
+    } else {
+      alert('You did not select any image.');
+    }
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
         <Text style={styles.title}>Welcome to My Portfolio</Text>
-        <Image source={require('../assets/images/profile.jpeg')} style={styles.profileImage} />
+        
+        <View style={styles.profileImage}>
+        <ImageViewer 
+          placeholderImageSource={PlaceholderImage} 
+          selectedImage={selectedImage}
+        />
+        </View>
+        
         <Link href="/projects" style={styles.link}>
           <Text style={styles.linkText}>Projects (Push)</Text>
         </Link>
